@@ -1,5 +1,6 @@
-import { ArrowRightOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Card, Col, Rate, Row, Typography } from "antd"
+import { useNavigate } from "react-router-dom";
 
 const {Title, Text} = Typography;
 
@@ -8,29 +9,32 @@ export type ItineraryTripCardProps = {
     destination: string, 
     departure: Date,
     arrival: Date,
-    url: string,
+    userUrl: string,
     name: string,
     role: string,
-    rating: number
+    rating: number,
+    id: number
 }
 
 const ItineraryTripCard = (trip: ItineraryTripCardProps) => {
 
+    const router = useNavigate();
+
     return (
-        <Card className="w-100 mt-1vh">
+        <Card className="w-100 mt-1vh" onClick={() => router(`/trips/manage/${trip.id}`)} hoverable>
             <Row>
                 <Col span={15}>
                     <Row>
                         <Col span={10} className="text-center">
                             <Title level={4}>{trip.origin}</Title>
-                            <Text>{trip.departure.toDateString()}</Text>
+                            <Text>{(new Date(trip.departure.toString())).toDateString()}</Text>
                         </Col>
                         <Col span={4} className="h-100" style={{display: 'flex', height: 100}}>
                             <ArrowRightOutlined style={{fontSize: 35, display: 'flex', margin: 'auto'}}/>
                         </Col>
                         <Col span={10} className="text-center">
                             <Title level={4}>{trip.destination}</Title>
-                            <Text>{trip.arrival.toDateString()}</Text>
+                            <Text>{(new Date(trip.arrival.toString())).toDateString()}</Text>
                         </Col>
                     </Row>
                 </Col>
@@ -41,7 +45,7 @@ const ItineraryTripCard = (trip: ItineraryTripCardProps) => {
                             <Rate disabled defaultValue={trip.rating} allowHalf/> 
                         </div>
                         <div>
-                            <Avatar src={trip.url} size={80}></Avatar>
+                            <Avatar src={trip.userUrl} size={80} icon={<UserOutlined/>}></Avatar>
                         </div>
                     </div>
                 </Col>

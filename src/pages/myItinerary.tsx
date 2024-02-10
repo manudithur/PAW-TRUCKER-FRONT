@@ -1,55 +1,126 @@
-import { Button, Col, Pagination, Row, Tabs } from "antd";
+import { Button, Col, Pagination, Row, Skeleton, Tabs, Typography } from "antd";
 import '../styles/main.scss';
-import ItineraryTripCard, { ItineraryTripCardProps } from "../components/itineraryTripCard";
 import { useNavigate } from "react-router-dom";
+import ItineraryTripCard, { ItineraryTripCardProps } from "../Components/itineraryTripCard";
+import { useEffect, useState } from "react";
+import { getTrips } from "../api/tripApi";
+import { getClaims, getUserByUrl } from "../api/userApi";
+import { useTranslation } from "react-i18next";
 
 const MyItinerary: React.FC = () => {
 
+    const {Title} = Typography;
+
+    const {t} = useTranslation();
+
+    document.title = t('pageTitles.myItinerary')
+
+    const claims = getClaims();
+
     const navigate = useNavigate();
 
-    const ongoingTrips: ItineraryTripCardProps[] = [];
-    
-    ongoingTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    ongoingTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    ongoingTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    ongoingTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    ongoingTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [ongoingTrips, setOngoingTrips] = useState<Array<ItineraryTripCardProps>>([]);
+    const [futureTrips, setFutureTrips] = useState<Array<ItineraryTripCardProps>>([]);
 
+    const [ongoingPage, setOngoingPage] = useState<number>(1);
+    const [maxOngoingPage, setMaxOngoingPage] = useState<number>(0)
+
+    const [futurePage, setFuturePage] = useState<number>(1);
+    const [maxFuturePage, setMaxFuturePage] = useState<number>(0)
+
+    useEffect(() => {
+        getTrips('ONGOING', ongoingPage.toString(), '12').then((trips) => {
+            const userPromises = trips.map((trip) => {
+                return getUserByUrl(claims?.role === 'PROVIDER' ? trip.trucker : trip.provider)
+                    .then((user) => {
+                        return {
+                            origin: trip.origin,
+                            destination: trip.destination,
+                            departure: trip.departureDate,
+                            arrival: trip.arrivalDate,
+                            userUrl: user.imageUrl,
+                            name: user.name,
+                            role: user.role,
+                            rating: user.rating,
+                            id: trip.tripId
+                        };
+                    });
+            });
     
-    const futureTrips: ItineraryTripCardProps[] = [];
+            Promise.all(userPromises).then((ongoingTrips) => {
+                setOngoingTrips(ongoingTrips);
+                if(trips.length > 0)
+                    setMaxOngoingPage(Number.parseInt(trips[0].maxPage ? trips[0].maxPage : '1'))
+            }).then(() => {
+                getTrips('FUTURE', futurePage.toString(), '12').then((trips) => {
+                    const futureUserPromises = trips.map((trip) => {
+                        return getUserByUrl(claims?.role === 'PROVIDER' ? trip.trucker : trip.provider)
+                            .then((user) => {
+                                return {
+                                    origin: trip.origin,
+                                    destination: trip.destination,
+                                    departure: trip.departureDate,
+                                    arrival: trip.arrivalDate,
+                                    userUrl: user.imageUrl,
+                                    name: user.name,
+                                    role: user.role,
+                                    rating: user.rating,
+                                    id: trip.tripId
+                                };
+                            });
+                    });
     
-    futureTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    futureTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
-    futureTrips.push({origin: 'Helsinki', destination: 'Tampere', departure: new Date(), arrival: new Date(), url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s', name: 'John Doe', role: 'Driver', rating: 4.5})
+                    Promise.all(futureUserPromises).then((futureTrips) => {
+                        setFutureTrips(futureTrips);
+                        if(trips.length > 0)
+                            setMaxFuturePage(Number.parseInt(trips[0].maxPage ? trips[0].maxPage : '1'))
+                        setIsLoading(false);
+                    });
+                });
+            });
+        });
+    }, [ongoingPage, futurePage]);
+    
 
     return(
-        <Tabs type="line" tabBarExtraContent={{right: <Button type="link" onClick={() => navigate('/pastTrips')}>View Past Trips</Button>}}>
-            <Tabs.TabPane tab="Ongoing Trips" key="1">
-                <Row className="w-100 flex-center">
-                    <Col span={15}>
-                        {ongoingTrips.map((trip) => (
-                            <ItineraryTripCard {...trip}/>
-                        ))}
-                        
-                    </Col>
-                </Row>
-                <Row className="w-100 flex-center">
-                    <Pagination className="text-center mt-2vh" defaultCurrent={1} total={50}/>
-                </Row>
+        <Tabs type="line" tabBarExtraContent={{right: <Button type="link" onClick={() => navigate('/pastTrips')}>{t('myItinerary.viewPastTrips')}</Button>}}>
+            
+            <Tabs.TabPane tab={t('myItinerary.ongoingTrips')} key="1">
+                <Skeleton loading={isLoading}>
+                    <Row className="w-100 flex-center">
+                        <Col span={15}>
+                            {ongoingTrips.map((trip) => (
+                                <ItineraryTripCard {...trip}/>
+                            ))}
+                            
+                        </Col>
+                    </Row>
+                    {ongoingTrips.length === 0 ? <Row className="w-100 flex-center">
+                        <Title level={3}>{t('myItinerary.noOngoingTrips')}</Title> </Row>:
+                    <Row className="w-100 flex-center">
+                        <Pagination className="text-center mt-2vh" current={ongoingPage} pageSize={12} total={maxOngoingPage*12} onChange={(page) => setOngoingPage(page)}/>
+                    </Row>
+                    }
+                </Skeleton>
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Future Trips" key="2">
-                <Row className="w-100 flex-center">
-                    <Col span={15}>
-                        {futureTrips.map((trip) => (
-                            <ItineraryTripCard {...trip}/>
-                        ))}
-                        
-                    </Col>
-                </Row>
-                <Row className="w-100 flex-center">
-                    <Pagination className="text-center mt-2vh" defaultCurrent={1} total={50}/>
-                </Row>
+            <Tabs.TabPane tab={t('myItinerary.futureTrips')} key="2">
+                <Skeleton loading={isLoading}>
+                    <Row className="w-100 flex-center">
+                        <Col span={15}>
+                            {futureTrips.map((trip) => (
+                                <ItineraryTripCard {...trip}/>
+                            ))}
+                            
+                        </Col>
+                    </Row>
+                    {futureTrips.length === 0 ? <Row className="w-100 flex-center">
+                        <Title level={3}>{t('myItinerary.noFutureTrips')}</Title> </Row>:
+                        <Row className="w-100 flex-center">
+                            <Pagination className="text-center mt-2vh" defaultCurrent={futurePage} total={maxFuturePage*12} pageSize={12} onChange={(page) => setFuturePage(page)}/>
+                        </Row>
+                    }
+                </Skeleton>
             </Tabs.TabPane>
         </Tabs>
     )

@@ -1,196 +1,238 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
-    Card, Cascader,
-    DatePicker, Image,
+    Card,
+    DatePicker,
     Input,
     InputNumber,
     message,
-    Typography,
     Upload,
-    UploadProps
+    UploadProps,
+    Row,
+    Col,
+    Select,
+    Skeleton,
+    Form
 } from 'antd';
 import '../styles/main.scss';
 import '../styles/profile.scss';
-import {useTranslation} from "react-i18next";
-import {UploadOutlined} from "@ant-design/icons";
-import type { DefaultOptionType } from 'antd/es/cascader';
-import {RcFile} from "antd/es/upload";
+import { useTranslation } from "react-i18next";
+import { UploadOutlined } from "@ant-design/icons";
+import { getCities } from '../api/citiesApi';
+import { getCargoTypes } from '../api/cargoTypeApi';
+import { useNavigate } from 'react-router-dom';
+import { createTrip } from '../api/tripApi';
+import { uploadImage } from '../api/imageApi';
+import { getClaims } from '../api/userApi';
+import dayjs from 'dayjs';
 
-
-const { Title, Text } = Typography;
-
-const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
-    });
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 
 const CreateTrip: React.FC = () => {
-
     const {t} = useTranslation();
+    const router = useNavigate();
+    const [form] = Form.useForm();
 
-    const [uploadPreviewSrc, setUploadPreviewSrc] = useState('');
+    document.title = t("pageTitles.createTrip");
 
-    const filter = (inputValue: string, path: DefaultOptionType[]) =>
-        path.some(
-            (option) => (option.label as string).toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
-        );
+    const claims = getClaims();
 
-    interface Option {
-        value: string;
-        label: string;
-        children?: Option[];
-        disabled?: boolean;
-    }
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [loading, setLoading] = useState<boolean>(true); // Start with loading true
+    const [cities, setCities] = useState<string[]>([]);
+    const [cargoTypes, setCargoTypes] = useState<string[]>([]);
 
-    //TODO: llenar con ciudades de backend
-    const cityOptions: Option[] = [
-        {
-            value: 'Buenos Aires',
-            label: 'Buenos Aires',
-        },
-        {
-            value: 'Cordoba',
-            label: 'Cordoba',
-        },
-        {
-            value: 'Rosario',
-            label: 'Rosario',
+    useEffect(() => {
+        try{
+            const cities = getCities();
+            const cargoTypes = getCargoTypes();
+
+            Promise.all([cities, cargoTypes]).then((values) => {
+                setCities(values[0].map((city) => city.cityName));
+                setCargoTypes(values[1]);
+                setLoading(false);
+            })
+        } catch (error){
+            router('/404')
         }
-    ];
 
 
-    const cargoOptions: Option[] = [
-        {
-            value: 'Refrigerated',
-            label: t('cargoType.refrigerated'),
-        },
-        {
-            value: 'Normal',
-            label: t("cargoType.normal"),
-        },
-        {
-            value: 'Hazardous',
-            label: t('cargoType.hazardous'),
-        },
-    ];
+    }, [])
 
+    /*
+    "create": {
+      "uploadClick": "Click to Upload",
+      "uploadSuccessful": "File uploaded successfully",
+      "uploadError": "File uploaded failed",
+      "notPng": "File is not a png",
+      "requireImageForPublication": "An image is required for the publication",
+      "errorCreatingPublication": "Error creating publication"
+    },
+    */
+
+    async function createTripAction(values: any) {
+        try {
+            var image = '';
+
+            if(!selectedFile){
+                message.error(t("create.requireImageForPublication"));
+                return;
+            }
+
+            if (selectedFile)
+                image = await uploadImage(selectedFile);
+
+            const { licensePlate, cargoType, origin, destination, dateRange, availableVolume, availableWeight, price } = values;
+            const trip = await createTrip(licensePlate, availableWeight, availableVolume, price, dateRange[0].format('YYYY-MM-DDTHH:mm:ss'), dateRange[1].format('YYYY-MM-DDTHH:mm:ss'), cargoType, origin, destination, image);
+            router('/trips/manage/' + trip.tripId);
+        } catch (error) {
+            message.error(t("create.errorCreatingPublication"));
+        }
+    }
     const props: UploadProps = {
         name: 'file',
         action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
         headers: {
-            authorization: 'authorization-text',
-        },
-        async onChange(info) {
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} ${t('create.uploadSuccessful')}`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} ${t('create.uploadError')}`);
-            }
-
-            if (!info.file.url && info.file.status !== 'removed') {
-                setUploadPreviewSrc(await getBase64(info.file.originFileObj as RcFile));
-            }
-            else {
-                setUploadPreviewSrc("");
-            }
-
-        },
-        beforeUpload: (file) => {
-            const isPNG = file.type === 'image/png';
-            if (!isPNG) {
-                message.error(`${file.name} ${t('create.notPng')}`);
-            }
-            return isPNG || Upload.LIST_IGNORE;
+          authorization: 'authorization-text',
         },
         maxCount: 1,
+
+        onChange(info) {
+          if (info.file.status !== 'uploading') {
+            console.log(info.file, info.fileList);
+          }
+          if (info.file.status === 'done') {
+            message.success(t("create.uploadSuccessful"));
+            if (info.file.originFileObj instanceof Blob) {
+              setSelectedFile(info.file.originFileObj as File);
+          }
+          } else if (info.file.status === 'error') {
+            message.error(t("create.uploadError"));
+          }
+        },
     };
+
+
+
 
     return (
         <div className="flex-center">
-            <Card title={t("trip.create")} className="w-50">
-                <div className="flex-center space-around mb-2vh">
-                    {uploadPreviewSrc !== '' && (
-                        <Image height='25vh' src={uploadPreviewSrc} defaultValue='' />
-                    )}
-                </div>
-                <div className="flex-center">
-                    <Upload {...props}>
-                        <Button icon={<UploadOutlined/>}>{t('create.upload')}</Button>
-                    </Upload>
-                </div>
-                <div className="flex-center space-around">
-                    <div>
-                        <Title level={5}>{t("common.licensePlate")}</Title>
-                        <Input/>
-                    </div>
-                    <div>
-                        <Title level={5}>{t("common.cargoType")}</Title>
-                        <Cascader
-                            options={cargoOptions}
-                        />
-                    </div>
-                </div>
-                <div className="flex-center space-around">
-                    <div>
-                        <Title level={5}>{t("common.origin")}</Title>
-                        <Cascader
-                            options={cityOptions}
-                            showSearch={{filter}}
-                        />
-                    </div>
-                    <div>
-                        <Title level={5}>{t('common.destination')}</Title>
-                        <Cascader
-                            options={cityOptions}
-                            showSearch={{ filter }}
-                        />
-                    </div>
-                </div>
-                <div className="flex-center space-around">
-                    <div>
-                        <Title level={5}>{t("common.departureDate")}</Title>
-                        <DatePicker showTime></DatePicker>
-                    </div>
-                    <div>
-                        <Title level={5}>{t("common.arrivalDate")}</Title>
-                        <DatePicker showTime></DatePicker>
-                    </div>
-                </div>
-                <div className="flex-center space-around">
-                    <div>
-                        <Title level={5}>{t("common.availableVolume")}</Title>
-                        <InputNumber
-                            min={0}
-                            formatter={(value) => `${value} m3`}
-                            parser={(value) => value!.replace('m3', '')}
-                        />
-                    </div>
-                    <div>
-                        <Title level={5}>{t('common.availableWeight')}</Title>
-                        <InputNumber
-                            min={1}
-                            formatter={(value) => `${value} kg`}
-                            parser={(value) => value!.replace('kg', '')}
-                        />
-                    </div>
-                    <div>
-                        <Title level={5}>{t("common.suggestedPrice")}</Title>
-                        <InputNumber
-                            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
-                            min={1}
-                        />
-                    </div>
-                </div>
-                <div className="flex-center" style={{marginTop: '5vh'}}>
-                    <Button type="primary">{t("trip.create")}</Button>
-                </div>
-            </Card>
+            <Skeleton loading={loading}>
+                <Form form={form} layout="vertical" onFinish={createTripAction}>
+                    <Card title={t("trip.createPublication")} className="w-100">
+                        <div className='w-100 text-center flex-center'>
+                            <Upload {...props}>
+                                <Button className='w-100' icon={<UploadOutlined />}>{t('create.uploadClick')}</Button>
+                            </Upload>
+                        </div>
+                        <Row gutter={16} className='mt-2vh'>
+                            {claims?.role === 'TRUCKER' ?
+                            <>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="licensePlate"
+                                    rules={[
+                                        { required: true, message: t('common.licensePlate') },
+                                        { pattern: /^([A-Za-z]{3}\\d{3})|([A-Za-z]{2}\\d{3}[A-Za-z]{2})$/, message: t('common.invalidLicensePlate') }
+                                    ]}
+                                >
+                                    <Input placeholder={t("common.licensePlate")} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="cargoType"
+                                    rules={[{ required: true, message: t('common.selectCargoType') }]}
+                                >
+                                    <Select placeholder={t("common.cargoType")}>
+                                        {cargoTypes.map((type) => (
+                                            <Option key={type} value={type}>{type}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            </>
+                            :
+                            <Col span={24}>
+                                <Form.Item
+                                    name="cargoType"
+                                    rules={[{ required: true, message: t('common.selectCargoType') }]}
+                                >
+                                    <Select placeholder={t("common.cargoType")}>
+                                        {cargoTypes.map((type) => (
+                                            <Option key={type} value={type}>{type}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>        
+                            }
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="origin"
+                                    rules={[{ required: true, message: t('common.selectOrigin') }]}
+                                >
+                                    <Select placeholder={t("common.origin")} showSearch>
+                                        {cities.map((city) => (
+                                            <Option key={city} value={city}>{city}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="destination"
+                                    rules={[{ required: true, message: t('common.selectDestination') }]}
+                                >
+                                    <Select placeholder={t('common.destination')} showSearch>
+                                        {cities.map((city) => (
+                                            <Option key={city} value={city}>{city}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Form.Item
+                            name="dateRange"
+                            rules={[{ required: true, message: t('common.selectDateRange') }]}
+                        >
+                            <RangePicker disabledDate={current => current && current.isBefore(dayjs().startOf('day'))} className='w-100' placeholder={[t('common.from'), t('common.to')]} />
+                        </Form.Item>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="availableVolume"
+                                    rules={[{ required: true, message: t('common.enterVolume'), type: 'number', min: 1 }]}
+                                >
+                                    <InputNumber placeholder={t("common.availableVolume")} className='w-100' min={1} max={1000} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="availableWeight"
+                                    rules={[{ required: true, message: t('common.enterWeight'), type: 'number', min: 50 }]}
+                                >
+                                    <InputNumber placeholder={t('common.availableWeight')} className='w-100' min={50} max={100000} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="price"
+                                    rules={[{ required: true, message: t('common.enterPrice'), type: 'number', min: 1, max: 1000000 }]}
+                                >
+                                    <InputNumber placeholder={t("common.suggestedPrice")} className='w-100' min={1} max={1000000} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" className='w-100'>{t("trip.create")}</Button>
+                        </Form.Item>
+                    </Card>
+                </Form>
+            </Skeleton>
         </div>
     );
 };

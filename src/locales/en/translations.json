@@ -1,0 +1,414 @@
+{
+    "landing": {
+      "ThisIs": "This is",
+      "Truckr": "Truckr.",
+      "ThisIsTruckr": "This is Truckr.",
+      "LandingMainMessage": "The platform that connects drivers and cargo providers.",
+      "LandingMainSubMessage": "Choose a role as trucker or provider and start trucking!",
+      "TrustworthyTruckers": "Trustworthy drivers.",
+      "TrustworthyTruckersMessage": "Our team is big! We count with great drivers to make sure your cargo gets to its destination safely and efficiently.",
+      "EconomicSolutions": "Inexpensive solutions.",
+      "EconomicSolutionsMessage": "We work with a wide variety of trip offers for you to compare prices and select your company's best fit.",
+      "ExploitReturns": "Capitalize on returns!",
+      "ExploitReturnsMessage": "Offer your truck's empty space and cash in on your trip's returns.",
+      "BookATrucker": "Book a trucker",
+      "DriveWithTruckr": "Drive with Truckr",
+      "NewLanding1": "Browse the cargo that is available. Filter however is more convenient for you",
+      "NewLanding2": "Select the best cargo option for you",
+      "NewLanding3": "Select the cargo that you want to ship and send an offer",
+      "OneMoreStep": "One more step",
+      "OneMoreStepMessage": "Wait for the cargo provider to confirm your offer. You can always modify it or send a counteroffer if you want.",
+      "NewLanding4": "Wait for the cargo provider to confirm your offer. You can always modify it or send a counteroffer if you want",
+      "ShipitE": "Ship it!",
+      "NewLanding5": "Once the order is confirmed, get in touch with the provider and ship the cargo",
+      "CreateCustomSearch": "Create a custom search according to your needs",
+      "SelectBestTrip": "Select the best trip for you",
+      "SelectBestTripsOffer": "Select the trip that best fits your needs and send an offer",
+      "WaitForConfirmation": "Wait for the trucker to confirm your offer. You can always modify it or send a counteroffer if you want",
+      "WaitForItE": "Wait for it!",
+      "GetInTouch": "Once the trucker confirms your offer you can get in touch with him and wait for your cargo",
+      "HowTruckrWorks": "How does Truckr work?",
+      "ForTrucker": "For Truckers",
+      "ForProvider": "For Providers",
+      "browseTrip": "1. Browse Trip",
+      "browseTripSubtitle": "Browse available trips. Filter however is more convenient for you.",
+      "selectTrucker": "2. Select the best trucker option for you",
+      "selectTruckerSubtitle": "Select the trucker that you want to ship with and send an offer.",
+      "oneMoreStep": "3. One more step",
+      "oneMoreStepSubtitle": "Wait for the trucker to confirm your offer. You can always modify it or send a counteroffer if you want.",
+      "shipIt": "4. Ship it!",
+      "shipItSubtitle": "Once the order is confirmed, get in touch with the trucker and ship the cargo.",
+      "BrowseCargo": "Browse Cargo",
+      "BrowseTrips": "Browse Trips",
+      "SearchTrips": "Search Trips",
+      "myItinerary": "My Itinerary",
+      "MyPublications": "My Publications",
+      "SentOffers": "Sent Offers",
+      "MyAlert": "My Alert",
+      "norequestFound": "No cargo found",
+      "notripFound": "No trips found"
+    }
+,
+    "provider": "Provider" ,
+    "trucker": "Trucker" ,
+
+
+    "greeting": {
+      "hello": "Hello World!"
+    },
+
+    "common": {
+      "date": "Date",
+      "time": "Time",
+      "search": "Search",
+      "origin": "Origin",
+      "destination": "Destination",
+      "from": "From",
+      "to": "To",
+      "maxVolume": "Max Volume",
+      "maxWeight": "Max Weight",
+      "delete": "Delete",
+      "cargoType": "Cargo Type",
+      "availableWeight": "Available Weight",
+      "avlWeight": "Avl. Weight",
+      "availableVolume": "Available Volume",
+      "avlVolume": "Avl. Volume",
+      "suggestedPrice": "Suggested Price",
+      "arrivalDate": "Arrival Date",
+      "departureDate": "Departure Date",
+      "licensePlate": "License Plate",
+      "offeredPrice": "Offered Price",
+      "browse": "Browse publications",
+      "uploadImage": "Click to Upload Image",
+      "invalidLicensePlate": "Invalid license plate format",
+      "selectCargoType": "Please select a cargo type",
+      "selectOrigin": "Please select an origin city",
+      "selectDestination": "Please select a destination city",
+      "selectDateRange": "Please select a date range",
+      "enterVolume": "Please enter available volume",
+      "enterWeight": "Please enter available weight",
+      "enterPrice": "Please enter a price",
+      "enterPriceValidation": "Price must be between 1 and 1,000,000",
+      "upload": "Upload image",
+      "save": "Save",
+      "sendOffer": "Send Offer",
+      "login": "Login",
+      "register": "Register",
+      "dateRange": "Date Range",
+      "weight": "Weight",
+      "volume": "Volume",
+      "viewAllTrips": "View All Trips",
+      "searchAgain": "Search Again",
+      "noTripsFound": "No trips found",
+      "noCargoFound": "No cargo found",
+      "accountVerified": "Account verified successfully",
+      "invalidLInk": "Invalid link"
+      
+    },
+
+    "cargoType": {
+      "refrigerated": "Refrigerated",
+      "normal": "Normal",
+      "hazardous": "Hazardous"
+    },
+
+    "myAlert": {
+      "help": "Need Help?",
+      "alertExplanation": "An alert is a notification that will be sent to you when a cargo that matches your criteria is created.",
+      "alertQuestion": "What is an alert?",
+      "create": "Create Alert",
+      "myAlert": "My Alert",
+      "noAlert": "You haven't created an alert yet",
+      "compatibleRequests": "Cargo that matches your criteria"
+    },
+
+    "profile": {
+      "cuit": "Cuit/Cuil",
+      "name": "Name",
+      "email": "Email",
+      "editProfile":"Edit Profile",
+      "completedTrips": "Completed Trips",
+      "profile": "Profile",
+      "role": "Role",
+      "picture": "Profile Picture",
+      "updateSuccess": "Profile updated successfully",
+      "fileUploaded": "File uploaded successfully",
+      "fileUploadError": "File uploaded failed",
+      "noReviews": "No reviews yet"
+    },
+
+    "review": {
+        "reviews": "Reviews"
+    },
+
+    "pastTrips": {
+        "lastUpdate": "Last Update",
+        "noPastTrips": "You haven't completed any trips yet"
+    },
+
+    "trip": {
+      "create": "Create Trip",
+      "createPublication": "Create Publication"
+    },
+
+    "create": {
+      "uploadClick": "Click to Upload",
+      "uploadSuccessful": "File uploaded successfully",
+      "uploadError": "File uploaded failed",
+      "notPng": "File is not a png",
+      "requireImageForPublication": "An image is required for the publication",
+      "errorCreatingPublication": "Error creating publication"
+    },
+
+    "manage": {
+      "origDest": "Origin - Destination",
+      "depArr": "Departure - Arrival",
+      "noOffers": "No offers yet for this publication",
+      "description": "Description",
+      "accept": "Accept",
+      "counterOffer": "Counter-Offer",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "offeredPrice": "Offered Price",
+      "publicationDeleted": "Publication deleted successfully",
+      "errorDeletingPublication": "Error deleting publication",
+      "tripConfirmed": "Trip confirmed",
+      "errorConfirmingTrip": "Error confirming trip",
+      "reviewSubmitted": "Review submitted",
+      "errorSubmittingReview": "Error submitting review",
+      "deletePublicationPop": {
+        "title": "Delete Publication",
+        "message": "Are you sure you want to delete this publication?",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "writeReview": "Write a review..."
+    },
+
+  "sentOffers": {
+    "noOffers": "You haven't sent any offers",
+    "sentOffers": "Sent Offers"
+  },
+
+  "offerCard": {
+    "originalOffer": "Original offer",
+    "yourOffer": "Your offer",
+    "counterOffer": "Counter offer",
+    "cancel": "Cancel",
+    "reject": "Reject",
+    "accept": "Accept",
+    "errorGettingOffer": "Error getting offer",
+    "errorGettingCounterOffer": "Error getting counter offer",
+    "errorAcceptingOffer": "Error accepting offer",
+    "offerAccepted": "Offer accepted",
+    "offerRejected": "Offer rejected",
+    "offerCanceled": "Offer canceled",
+    "errorCancelingOffer": "Error canceling offer"
+  },
+
+  "messages": {
+    "counterOfferCanceledSuccess": "Counter offer canceled successfully",
+    "errorDeletingOffer": "Error deleting offer",
+    "alertCreatedSuccess": "Alert created successfully",
+    "unexpectedErrorTryAgain": "Unexpected error. Try again."
+  },
+
+  "errorPages":{
+    "error404": "Error 404",
+    "error404Message": "The page you are looking for does not exist",
+    "error500": "Error 500",
+    "error500Message": "An error occurred while processing your request",
+    "error403": "Error 403",
+    "error403Message": "You are not authorized to access this page",
+    "back": "Back"
+  },
+
+  "filters": {
+    "title": "Filters",
+    "origin": "Origin",
+    "destination": "Destination",
+    "weight": "Weight",
+    "volume": "Volume",
+    "price": "Price",
+    "cargoType": "Cargo Type",
+    "dateRange": "Date Range",
+    "sortBy": "Sort by",
+    "reset": "Clear filters"
+  },
+
+  "validation": {
+    "cargoTypeRequired": "Cargo type is required",
+    "originRequired": "Origin is required",
+    "dateRangeRequired": "Date range is required",
+    "invalidValueForVolumeWeight": "Invalid value for max volume or max weight",
+    "volumeRequired": "Max volume is required",
+    "weightRequired": "Max weight is required",
+    "ratingRequired": "Please select a rating.",
+    "reviewRequired": "Please enter your review.",
+    "offerDescriptionRequired": "Please enter a description for your offer.",
+    "offerPriceRequired": "Please enter a price for your offer.",
+    "minPrice": "Price must be at least 1",
+    "maxDescriptionLength": "Description must be at most 250 characters long"
+  },
+
+  "login": {
+    "title": "Login",
+    "newToTruckr": "New to Truckr?",
+    "signUpNow": "Sign up now",
+    "cuitRequired": "Please input your CUIT!",
+    "invalidCUITFormat": "Invalid CUIT format!",
+    "passwordRequired": "Please input your password!",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Login",
+    "invalidCredentials": "Invalid credentials or user not verified",
+    "loginFailed": "Login failed. Please try again.",
+    "cuitPlaceholder": "CUIT 00-00000000-0",
+    "passwordPlaceholder": "Password"
+  },
+
+  "register": {
+    "cuitPlaceholder": "CUIT 00-00000000-0",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "createAccount": "Create an account",
+    "alreadyAUser": "Already a user?",
+    "login": "Login",
+    "accountCreatedSuccessfully": "Account created successfully",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "createAccountButton": "Create Account",
+    "pleaseInputYourCUIT": "Please input your CUIT!",
+    "invalidCUITFormat": "Invalid CUIT format!",
+    "pleaseInputYourName": "Please input your name!",
+    "invalidNameFormat": "Invalid name format!",
+    "pleaseInputYourEmail": "Please input your email!",
+    "inputNotValidEmail": "Input is not a valid email!",
+    "pleaseSelectYourRole": "Please select your role!",
+    "trucker": "Trucker",
+    "provider": "Provider",
+    "pleaseInputYourPassword": "Please input your password!",
+    "passwordAtLeastCharacters": "Password must be at least 8 characters long!",
+    "pleaseConfirmYourPassword": "Please confirm your password!",
+    "passwordsDoNotMatch": "Passwords do not match!"
+  },
+
+  "actions": {
+    "confirmReceived": "Confirm Cargo Received",
+    "confirmCompleted": "Confirm Trip Completed",
+    "completed": " Trip completed.",
+    "submitReview": "Submit Review"
+  },
+
+  "publication": {
+    "confirmed": "You have confirmed the cargo receipt.",
+    "notConfirmed": "You have not confirmed the cargo receipt.",
+    "completed": "Trip completed successfully.",
+    "notCompleted": "Trip not completed."
+  },
+
+  "truckerConfirmation": {
+    "completed": "Trucker completed the trip.",
+    "notCompleted": "Trucker didn't complete the trip."
+  },
+
+  "providerConfirmation": {
+    "confirmed": "Provider received the cargo.",
+    "notConfirmed": "Provider didn't receive the cargo yet."
+  },
+
+  "resetPassword": {
+    "title": "Reset Password",
+    "invalidLink": "Please request a valid reset password link",
+    "linkExpired": "Link expired or already used. Please request a new one",
+    "newPasswordRequired": "Please input your new password!",
+    "passwordLength": "Password must be at least 6 characters long!",
+    "confirmPasswordRequired": "Please confirm your new password!",
+    "passwordMismatch": "The two passwords that you entered do not match!",
+    "resetButton": "Reset Password",
+    "successMessage": "Password changed successfully! ",
+    "loginLink": "Login back",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password"
+  },
+
+  "resetPasswordRequest": {
+    "title": "Reset Password",
+    "cuitRequired": "Please input your CUIT!",
+    "invalidCUITFormat": "Invalid CUIT format!",
+    "cuitPlaceholder": "CUIT 00-00000000-0",
+    "resetPasswordButton": "Reset Password",
+    "emailSentConfirmation": "If an account with this CUIT exists, a reset email has been sent.",
+    "invalidCUIT": "Invalid CUIT",
+    "emailSentMessage": "Email sent! Please check your inbox."
+  },
+
+
+  "myItinerary":{
+    "ongoingTrips": "Ongoing trips",
+    "noOngoingTrips": "You don't have any ongoing trips",
+    "futureTrips": "Future trips",
+    "noFutureTrips": "You don't have any future trips",
+    "viewPastTrips": "View past trips"
+  },
+
+  "myPublications":{
+    "noActivePublications": "You don't have active publications",
+    "createPublication": "Create Publication",
+    "activePublications": "Active Publications",
+    "noExpiredPublications": "You don't have expired publications",
+    "expiredPublications": "Expired Publications"
+  },
+
+  "publicationDetails": {
+    "fetchError": "Error fetching publication details. Please try again.",
+    "offerSuccess": "Offer sent successfully.",
+    "offerError": "Failed to send the offer. Please try again.",
+    "weight": "Weight",
+    "volume": "Volume",
+    "sendOffer": "Send Offer",
+    "enterDescription": "Enter your description",
+    "priceRange": "Offer must be between $1 and $1000000"
+  },
+
+  "pageTitles": {
+    "error404": "Error 404",
+    "error500": "Error 500",
+    "error403": "Error 403",
+    "browseTrips": "Browse Trips",
+    "browseRequests": "Browse Cargo",
+    "createAlert": "Create Alert",
+    "createTrip": "Create Publication",
+    "editProfile": "Edit Profile",
+    "landing": "Home",
+    "login": "Login",
+    "manageTrip": "Manage Trip",
+    "manageRequest": "Manage Cargo",
+    "myAlert": "My Alert",
+    "myItinerary": "My Itinerary",
+    "myPublications": "My Publications",
+    "pastTrips": "Past Trips",
+    "profile": "User Profile",
+    "requestDetails": "Cargo Details",
+    "tripDetails": "Trip Details",
+    "register": "Register",
+    "resetPassword": "Reset Password",
+    "resetPasswordRequest": "Reset Password Request",
+    "searchTrips": "Search Trips",
+    "sendCounterOffer": "Send Counter Offer",
+    "sentOffers": "Sent Offers",
+    "verifyAccount": "Verify Account"
+  },
+
+  "sort":{
+    "departureDate ASC": "Departure Date Ascending",
+    "departureDate DESC": "Departure Date Descending",
+    "arrivalDate ASC": "Arrival Date Ascending",
+    "arrivalDate DESC": "Arrival Date Descending",
+    "price ASC": "Price Ascending",
+    "price DESC": "Price Descending"
+  }
+
+
+}
+  

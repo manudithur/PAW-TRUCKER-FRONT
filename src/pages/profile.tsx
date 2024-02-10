@@ -1,63 +1,159 @@
-import React from 'react';
-import {Avatar, Button, Card, Typography} from 'antd';
+import React, { useEffect, useState } from 'react';
+import {Avatar, Button, Card, Col, Pagination, Row, Skeleton, Typography} from 'antd';
 import '../styles/main.scss';
 import '../styles/profile.scss';
 import {useTranslation} from "react-i18next";
 import {StarFilled, UserOutlined} from "@ant-design/icons";
-import ReviewContainer from '../components/reviewContainer';
+import ReviewContainer from '../Components/reviewContainer';
+import {getClaims, getUserById, getUserByUrl} from "../api/userApi";
+import {User} from "../models/User";
+import {getReviewsByUser} from "../api/reviewApi";
+import { Review } from '../models/Review';
+import NotFound404 from './404';
+import { useNavigate, useParams } from 'react-router-dom';
+
 
 const { Title, Text } = Typography;
 
-const profile: React.FC = () => {
+const Profile: React.FC = () => {
 
     const {t} = useTranslation();
 
-    const [, setContainer] = React.useState<HTMLDivElement | null>(null);
+    document.title = t('pageTitles.profile');
 
-    const cardTitle = ' 4.5 - (3 ' + t("review.reviews") + ")";
-    //TODO: get user data from backend
+    const [ user, setUser] = useState<User>();
+    const [ reviews, setReviews] = useState<Review[]>([]);
+    const [ completedTrips, setCompletedTrips] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    
+    const [page, setPage] = useState<number>(1);
+    const [pageSize] = useState<number>(4);
+    const [maxPage, setMaxPage] = useState<number>(0);
+    const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
 
-    return (
-        <div>
-        <div className="flex-center">
-            <Card style={{width:'30%',margin:'3vh'}} headStyle={{fontSize:'3vh', color:'#142d4c'}} title={t("profile.profile")}>
-                <div className='flex-center'>
-                    <Avatar size={124} icon={<UserOutlined />} />
+    const {userId} = useParams();
+
+    const router = useNavigate();
+
+    useEffect(() => {
+
+        setLoadingReviews(true);
+        const claims = getClaims();
+
+        if (claims === null && userId === undefined){
+            router('/login');
+            return;
+        }
+
+        userId ? getUserById(userId).then((user) => {
+
+            setUser(user);
+            setCompletedTrips(user.completedTripsCount);
+        
+            getReviewsByUser(user.id, page.toString(), pageSize.toString()).then((reviews) => {
+                setReviews(reviews);
+                if(reviews.length > 0)
+                    setMaxPage(reviews[0].maxPage ? Number.parseInt(reviews[0].maxPage) : 0);
+                setIsLoading(false);
+            })
+
+            setIsLoading(false);
+            setLoadingReviews(false);
+        })
+
+        :
+
+        getUserByUrl(claims!.userURL).then((user) => {
+            setUser(user);
+            setCompletedTrips(user.completedTripsCount);
+        
+            getReviewsByUser(user.id, page.toString(), pageSize.toString()).then((reviews) => {
+                setReviews(reviews);
+                if(reviews.length > 0)
+                    setMaxPage(reviews[0].maxPage ? Number.parseInt(reviews[0].maxPage) : 0);
+                setIsLoading(false);
+            })
+
+            setIsLoading(false);
+            setLoadingReviews(false);
+        })
+
+    }, [page])
+    
+    if( isLoading ){
+        return (
+            <Row className='w-100 space-evenly'>
+                <Skeleton loading={isLoading} active avatar paragraph={{ rows: 4 }}/>
+            </Row>
+        )
+    }
+    
+    if( user != null && user != undefined ){
+        return (
+            <div>
+                <div className="space-evenly">
+                    <Row className='w-80 space-evenly' style={{alignItems: 'start'}}>
+                        <Col span={12}>
+                            <Card className='w-100' title={<Title level={3}>{t("profile.profile")}</Title>}>
+                                <div className='flex-center'>
+                                    <Avatar size={124} icon={<UserOutlined/>} src={user!.imageUrl}/>
+                                </div>
+                                <Title level={5}>{t("profile.name")}</Title>
+                                <Text>{user!.name}</Text>
+                                <Title level={5}>{t('profile.cuit')}</Title>
+                                <Text>{user!.cuit}</Text>
+                                <Title level={5}>{t('profile.role')}</Title>
+                                <Text>{t(user.role.toLocaleLowerCase())}</Text>
+                                { !userId ?
+                                <Button style={{width: '100%', marginTop: '5vh'}} type='primary' onClick={() => router('./edit')}>{t("profile.editProfile")}</Button>
+                                : null
+                                }
+                            </Card>
+                        </Col>
+                        <Col span={7}>
+                            <Card title={<Title level={3}>{t("profile.completedTrips")}</Title>}>
+                                <div className='w-100 text-center'>
+                                    <Title level={3}>{completedTrips}</Title>
+                                </div>
+                            </Card>
+                        </Col>
+                    </Row>
                 </div>
-                <Title level={5}>{t("profile.name")}</Title>
-                <Text>dfkjdf</Text>
-                <Title level={5}>{t('profile.cuit')}</Title>
-                <Text>dfkjdf</Text>
-                <Title level={5}>{t('profile.email')}</Title>
-                <Text>dfkjdf</Text>
-                <Button style={{width:'100%', marginTop:'5vh'}} type='primary'>{t("profile.editProfile")}</Button>
-            </Card>
-            <Card headStyle={{fontSize:'3vh', color:'#142d4c'}} title={t("profile.completedTrips")}>
-                <Text>0</Text>
-            </Card>
-        </div>
-        <div className='flex-center'>
-            <Card headStyle={{fontSize:'2.5vh', color:'#142d4c'}} style={{width:'60%'}} title={
-                <div style={{justifyContent:'center',alignItems:'center', justifyItems:'center'}}>
-                    <StarFilled></StarFilled>
-                    {cardTitle}
+                <div className='space-evenly'>
+                    <Row className='w-80 space-evenly mt-5' style={{alignItems: 'start'}}>
+                        <Col span={20}>
+                            <Card>
+                                <Skeleton loading={loadingReviews}>
+                                    {
+                                        reviews && reviews.length > 0 ?  
+                                            <Title level={3}>
+                                                <StarFilled /> 
+                                                {" "}{new Number(user.rating).toFixed(1)}
+                                            </Title>
+                                        : <Title level={3}>{t('profile.noReviews')}</Title>
+                                    }
+                                    { reviews && reviews.length > 0 ?
+                                        <div>
+                                            {reviews.map((review) => (
+                                                // Each item in the array is mapped to a JSX element
+                                                <ReviewContainer avgRating={review.rating} comment={review.review}></ReviewContainer>
+                                            ))}
+                                            <div className='w-100 flex-center mt-2vh'>
+                                                <Pagination current={page} total={maxPage*pageSize} pageSize={pageSize} onChange={(page) => setPage(page)} />
+                                            </div>
+                                        </div>
+                                        : <></>
+                                    }
+                                </Skeleton>
+                            </Card>
+                        </Col>
+                    </Row>
                 </div>
-            }>
-                <div className='reviewsContainerStyle' ref={setContainer}>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                    <ReviewContainer avgRating={5} comment={'Muy Bueno'}></ReviewContainer>
-                </div>
-            </Card>
-        </div>
-        </div>
-    );
+            </div>
+        );
+    } else{
+        return(<NotFound404></NotFound404>)
+    }
 };
 
-export default profile;
+export default Profile;

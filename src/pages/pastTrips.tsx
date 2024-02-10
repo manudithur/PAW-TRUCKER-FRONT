@@ -1,54 +1,70 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Pagination, Row, Typography} from 'antd';
+import {Col, Pagination, Row, Skeleton, Typography} from 'antd';
 import '../styles/main.scss';
 import '../styles/profile.scss';
 import {useTranslation} from "react-i18next";
-import PastTripCard, { TripCardProps } from '../components/pastTripCard';
+
+import {getTrips} from "../api/tripApi";
+import TripCard, {TripCardProps} from "../Components/tripCard.tsx";
 
 const PastTrips: React.FC = () => {
 
     const {t} = useTranslation();
 
-    const [trips, setTrips] = useState<Array<TripCardProps>>([
-        {
-            type: 'trip',
-            from: 'Helsinki',
-            to: 'Tampere',
-            fromDate: new Date(),
-            toDate: new Date(),
-            lastUpdate: new Date(),
-            price: 1000,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s',
-        },
-    ]);
+    document.title = t('pageTitles.pastTrips');
+
+    const {Title} = Typography;
+
+    const [trips, setTrips] = useState<TripCardProps[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [page, setPage] = useState<number>(1);
+    const [maxPage, setMaxPage] = useState<number>(0);
+    const [pageSize] = useState<number>(12);
 
     useEffect(() => {
-        const newTrip: TripCardProps = {
-            type: 'trip',
-            from: 'New Origin',
-            to: 'New Destination',
-            fromDate: new Date(),
-            toDate: new Date(),
-            lastUpdate: new Date(),
-            price: 1500,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHkjak0XBtavkkM8z1vJo-BMjmjxfOEaU7pyFAGDc&s',
-        };
+        setIsLoading(true);
+        getTrips('PAST', page.toString(), pageSize.toString()).then((trips) => {
+            setTrips(trips.map((trip) => {
+                return {
+                    id: trip.tripId,
+                    type: 'trip',
+                    from: trip.origin,
+                    to: trip.destination,
+                    fromDate: trip.departureDate,
+                    toDate: trip.arrivalDate,
+                    weight: trip.weight,
+                    volume: trip.volume,
+                    price: trip.price,
+                    image: trip.image,
+                    cargoType: trip.type,
+                    clickUrl: '/trips/manage'
+                }
+            }));
+            if(trips.length > 0)
+                setMaxPage(trips[0].maxPage ? Number.parseInt(trips[0].maxPage) : 1)
+            setIsLoading(false);
+        });
 
-        // Create a new array with the existing trips and the new trip
-        setTrips((prevTrips) => [...prevTrips, newTrip]);
-    }, []); // The empty dependency array ensures that this effect runs only once
+    }, [page]); // The empty dependency array ensures that this effect runs only once
 
     return (
         <div style={{display: "flex", flexDirection: 'column'}}>
-            <Row gutter={15} className='flex-center'>
-                {trips.map((trip,index) => (
-                        <Col xxl={5} xl={8} lg={12} md={12} sm={22} xs={22} key={index}>
-                            <PastTripCard {...trip}></PastTripCard>
-                        </Col>
-                    )
-                )}
-            </Row>
-            <Pagination className="text-center mt-2vh" defaultCurrent={1} total={50} />
+            <Skeleton loading={isLoading}>
+                <Row gutter={15} className='flex-center'>
+                    {trips.map((trip,index) => (
+                            <Col xxl={6} xl={6} lg={8} md={12} sm={22} xs={22} key={index}>
+                                <TripCard {...trip}></TripCard>
+                            </Col>
+                        )
+                    )}
+                </Row>
+                {trips.length === 0 ?
+                    <Row gutter={15} className='flex-center'>
+                        <Title level={3}>{t('pastTrips.noPastTrips')}</Title>
+                    </Row>:
+                    <Pagination className="text-center mt-2vh" current={page} total={pageSize*maxPage} pageSize={pageSize} onChange={(page) => setPage(page)} />
+                }
+            </Skeleton>
         </div>
     );
 };
