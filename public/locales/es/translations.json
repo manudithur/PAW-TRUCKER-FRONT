@@ -3,6 +3,7 @@
     "hello": "¡Hola Mundo!"
   },
 
+
   "myalert": {
     "help": "¿Necesitas ayuda?",
     "alertExplanation": "Una alerta es una notificación que se te enviará cuando se cree un cargamento que coincida con tus criterios.",
